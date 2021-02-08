@@ -1,3 +1,4 @@
+'use strict'
 
 if(!Memory.__segindex) {
   Memory.__segindex = {
@@ -135,7 +136,9 @@ var sos_lib_segments = {
 
       datastring = ERR_BUSY
     }
-
+    if (Number.isInteger(datastring) && datastring < 0) {
+      Logger.log(`Unable to retrieve "${label}" segments`, LOG_WARN)
+    }
     return datastring
   },
 

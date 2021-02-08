@@ -1,6 +1,6 @@
 'use strict'
 
-const distance_transform = require('thirdparty_distancetransform')
+const distanceTransform = require('thirdparty_distancetransform')
 
 /**
  * Plan room structures
@@ -8,32 +8,168 @@ const distance_transform = require('thirdparty_distancetransform')
 
 const LAYOUT_CORE_BUFFER = 4 // CEIL(radius)
 // Keep spawn center for first room.
-var LAYOUT_CORE = [
-  [STRUCTURE_TOWER, STRUCTURE_TOWER,    STRUCTURE_TOWER],
-  [STRUCTURE_TOWER, STRUCTURE_LOADER,   STRUCTURE_ROAD,        STRUCTURE_ROAD,     STRUCTURE_ROAD,    STRUCTURE_ROAD],
-  [STRUCTURE_TOWER, STRUCTURE_TOWER,    STRUCTURE_LINK,        STRUCTURE_TERMINAL, STRUCTURE_STORAGE, STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_ROAD],
-  [STRUCTURE_ROAD,  STRUCTURE_OBSERVER, STRUCTURE_NUKER,       STRUCTURE_CRANE,    STRUCTURE_ROAD,    STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_SPAWN, STRUCTURE_ROAD],
-  [STRUCTURE_ROAD,  STRUCTURE_ROAD,     STRUCTURE_POWER_SPAWN, STRUCTURE_ROAD,     STRUCTURE_SPAWN,   STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_ROAD],
-  [null,            STRUCTURE_ROAD,     STRUCTURE_ROAD,        STRUCTURE_ROAD,     STRUCTURE_ROAD,    STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_ROAD,  STRUCTURE_ROAD],
-  [null,            STRUCTURE_ROAD,     STRUCTURE_SPAWN,       STRUCTURE_ROAD,     STRUCTURE_ROAD,    STRUCTURE_LAB,   STRUCTURE_ROAD,  STRUCTURE_LAB,   STRUCTURE_ROAD],
-  [null,            STRUCTURE_ROAD,     STRUCTURE_ROAD,        STRUCTURE_ROAD,     STRUCTURE_LAB,     STRUCTURE_ROAD,  STRUCTURE_LAB,   STRUCTURE_ROAD,  STRUCTURE_LAB],
-  [null,            null,               null,                  null,               STRUCTURE_LAB,     STRUCTURE_LAB,   STRUCTURE_LAB,   STRUCTURE_LAB,   STRUCTURE_LAB],
+const LAYOUT_CORE = [
+  [STRUCTURE_TOWER, STRUCTURE_TOWER, STRUCTURE_TOWER],
+  [
+    STRUCTURE_TOWER,
+    STRUCTURE_LOADER,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD
+  ],
+  [
+    STRUCTURE_TOWER,
+    STRUCTURE_TOWER,
+    STRUCTURE_LINK,
+    STRUCTURE_TERMINAL,
+    STRUCTURE_STORAGE,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD
+  ],
+  [
+    STRUCTURE_ROAD,
+    STRUCTURE_OBSERVER,
+    STRUCTURE_NUKER,
+    STRUCTURE_CRANE,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_SPAWN,
+    STRUCTURE_ROAD
+  ],
+  [
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_POWER_SPAWN,
+    STRUCTURE_ROAD,
+    STRUCTURE_SPAWN,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD
+  ],
+  [
+    null,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD
+  ],
+  [
+    null,
+    STRUCTURE_ROAD,
+    STRUCTURE_SPAWN,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_LAB,
+    STRUCTURE_ROAD,
+    STRUCTURE_LAB,
+    STRUCTURE_ROAD
+  ],
+  [
+    null,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD,
+    STRUCTURE_LAB,
+    STRUCTURE_ROAD,
+    STRUCTURE_LAB,
+    STRUCTURE_ROAD,
+    STRUCTURE_LAB
+  ],
+  [
+    null,
+    null,
+    null,
+    null,
+    STRUCTURE_LAB,
+    STRUCTURE_LAB,
+    STRUCTURE_LAB,
+    STRUCTURE_LAB,
+    STRUCTURE_LAB
+  ]
 ]
-
 
 const LAYOUT_FLOWER_BUFFER = 3 // CEIL(radius)
-var LAYOUT_FLOWER = [
-  [null,                STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, null,                STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, null],
-  [STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_EXTENSION],
-  [STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_LINK,      STRUCTURE_ROAD,      STRUCTURE_EXTENSION, STRUCTURE_EXTENSION],
-  [null,                STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_CONTAINER, STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_ROAD],
-  [STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_EXTENSION, STRUCTURE_EXTENSION],
-  [STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, STRUCTURE_ROAD,      STRUCTURE_EXTENSION],
-  [null,                STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, null,                STRUCTURE_EXTENSION, STRUCTURE_EXTENSION, null]
+const LAYOUT_FLOWER = [
+  [
+    null,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    null,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    null
+  ],
+  [
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION
+  ],
+  [
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_LINK,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION
+  ],
+  [
+    null,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_CONTAINER,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_ROAD
+  ],
+  [
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION
+  ],
+  [
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_ROAD,
+    STRUCTURE_EXTENSION
+  ],
+  [
+    null,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    null,
+    STRUCTURE_EXTENSION,
+    STRUCTURE_EXTENSION,
+    null
+  ]
 ]
 
-
 class CityLayout extends kernel.process {
+  constructor (...args) {
+    super(...args)
+    this.priority = PRIORITIES_CONSTRUCTION
+  }
+
   getDescriptor () {
     return this.data.room
   }
@@ -44,19 +180,19 @@ class CityLayout extends kernel.process {
     }
 
     this.room = Game.rooms[this.data.room]
-    var layout = this.room.getLayout()
-    if(layout.isPlanned()) {
-      Logger.log('Room ' + this.data.room + ' already planned', LOG_ERROR)
+    const layout = this.room.getLayout()
+    if (layout.isPlanned()) {
+      Logger.log(`Room ${this.data.room} already planned`, LOG_ERROR)
       layout.visualize()
       return this.suicide()
     }
 
     // Check for existing spawns in case this is the first room.
-    var spawns = this.room.find(FIND_MY_SPAWNS)
+    const spawns = this.room.find(FIND_MY_SPAWNS)
     this.corePos = spawns.length > 0 ? spawns[0].pos : false
 
     // Iterate through plans, trying each one multiple times before moving on.
-    var plans = [
+    const plans = [
       'nearController',
       'randomCore',
       'randomAll'
@@ -73,7 +209,8 @@ class CityLayout extends kernel.process {
     }
     if (this.data.plan >= plans.length) {
       // Room probably can't support things
-      this.suicide()
+      Logger.log(`Unable to come up with a layout for ${this.room.name}`, LOG_ERROR)
+      return this.suicide()
     }
 
     // Actually run layout planning attempt.
@@ -86,39 +223,43 @@ class CityLayout extends kernel.process {
    * the core structures as can be managed.
    */
   nearController () {
-    var baseMatrix = this.getBaseMatrix()
-    var dt = distance_transform.distanceTransform(baseMatrix)
+    let baseMatrix = this.getBaseMatrix()
+    let dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    var core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER, function (a, b) {
+    const corePosition = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER, function (a, b) {
       return a.getRangeTo(Game.rooms[a.roomName].controller) - b.getRangeTo(Game.rooms[b.roomName].controller)
     })
-    if (!core_position) {
+    if (!corePosition) {
       return false
     }
-    baseMatrix = this.addToMatrix(baseMatrix, core_position, LAYOUT_CORE_BUFFER)
-    dt = distance_transform.distanceTransform(baseMatrix);
+    baseMatrix = this.addToMatrix(baseMatrix, corePosition, LAYOUT_CORE_BUFFER)
+    dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    var flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(core_position) - b.getRangeTo(core_position)
+    const flower1Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
+      return a.getRangeTo(corePosition) - b.getRangeTo(corePosition)
     })
-    if (!flower1_position) {
+    if (!flower1Position) {
       return false
     }
-    baseMatrix = this.addToMatrix(baseMatrix, flower1_position, LAYOUT_FLOWER_BUFFER)
-    dt = distance_transform.distanceTransform(baseMatrix);
-
+    baseMatrix = this.addToMatrix(baseMatrix, flower1Position, LAYOUT_FLOWER_BUFFER)
+    dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get flower2 structures */
-    var flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(core_position) - b.getRangeTo(core_position)
+    const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
+      const aRange = a.getRangeTo(corePosition)
+      const bRange = b.getRangeTo(corePosition)
+      if (aRange === bRange) {
+        return a.getRangeTo(flower1Position) - b.getRangeTo(flower1Position)
+      }
+      return aRange - bRange
     })
-    if (!flower2_position) {
+    if (!flower2Position) {
       return false
     }
 
-    return this.planLayout(core_position, flower1_position, flower2_position)
+    return this.planLayout(corePosition, flower1Position, flower2Position)
   }
 
   /**
@@ -126,89 +267,94 @@ class CityLayout extends kernel.process {
    * be managed.
    */
   randomCore () {
-    var baseMatrix = this.getBaseMatrix()
-    var dt = distance_transform.distanceTransform(baseMatrix)
+    let baseMatrix = this.getBaseMatrix()
+    let dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    var core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
-    if (!core_position) {
+    const corePosition = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
+    if (!corePosition) {
       return false
     }
-    baseMatrix = this.addToMatrix(baseMatrix, core_position, LAYOUT_CORE_BUFFER)
-    dt = distance_transform.distanceTransform(baseMatrix);
+    baseMatrix = this.addToMatrix(baseMatrix, corePosition, LAYOUT_CORE_BUFFER)
+    dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    var flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(core_position) - b.getRangeTo(core_position)
+    const flower1Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
+      return a.getRangeTo(corePosition) - b.getRangeTo(corePosition)
     })
-    if (!flower1_position) {
+    if (!flower1Position) {
       return false
     }
-    baseMatrix = this.addToMatrix(baseMatrix, flower1_position, LAYOUT_FLOWER_BUFFER)
-    dt = distance_transform.distanceTransform(baseMatrix);
-
+    baseMatrix = this.addToMatrix(baseMatrix, flower1Position, LAYOUT_FLOWER_BUFFER)
+    dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get flower2 structures */
-    var flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
-      return a.getRangeTo(core_position) - b.getRangeTo(core_position)
+    const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER, function (a, b) {
+      const aRange = a.getRangeTo(corePosition)
+      const bRange = b.getRangeTo(corePosition)
+      if (aRange === bRange) {
+        return a.getRangeTo(flower1Position) - b.getRangeTo(flower1Position)
+      }
+      return aRange - bRange
     })
-    if (!flower2_position) {
+    if (!flower2Position) {
       return false
     }
 
-    return this.planLayout(core_position, flower1_position, flower2_position)
+    return this.planLayout(corePosition, flower1Position, flower2Position)
   }
 
   /**
    * Place core structures and flower structures anywhere they will fit.
    */
   randomAll () {
-    var baseMatrix = this.getBaseMatrix()
-    var dt = distance_transform.distanceTransform(baseMatrix)
+    let baseMatrix = this.getBaseMatrix()
+    let dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get core structures */
-    var core_position = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
-    if (!core_position) {
+    const corePosition = this.corePos ? this.corePos : this.getPositionFor(dt, LAYOUT_CORE_BUFFER)
+    if (!corePosition) {
       return false
     }
-    baseMatrix = this.addToMatrix(baseMatrix, core_position, LAYOUT_CORE_BUFFER)
-    dt = distance_transform.distanceTransform(baseMatrix);
+    baseMatrix = this.addToMatrix(baseMatrix, corePosition, LAYOUT_CORE_BUFFER)
+    dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get flower1 structures */
-    var flower1_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
-    if (!flower1_position) {
+    const flower1Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
+    if (!flower1Position) {
       return false
     }
-    baseMatrix = this.addToMatrix(baseMatrix, flower1_position, LAYOUT_FLOWER_BUFFER)
-    dt = distance_transform.distanceTransform(baseMatrix);
-
+    baseMatrix = this.addToMatrix(baseMatrix, flower1Position, LAYOUT_FLOWER_BUFFER)
+    dt = distanceTransform.distanceTransform(baseMatrix)
 
     /* Get flower2 structures */
-    var flower2_position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
-    if (!flower2_position) {
+    const flower2Position = this.getPositionFor(dt, LAYOUT_FLOWER_BUFFER)
+    if (!flower2Position) {
       return false
     }
 
-    return this.planLayout(core_position, flower1_position, flower2_position)
+    return this.planLayout(corePosition, flower1Position, flower2Position)
   }
 
   /**
    * Convert the positions and templates into an actual RoomLayout and save it.
    */
-  planLayout (core_pos, flower1_pos, flower2_pos) {
-    var layout = Room.getLayout(this.data.room)
+  planLayout (corePos, flower1Pos, flower2Pos) {
+    const layout = Room.getLayout(this.data.room)
 
-    var coreAdjusted = new RoomPosition(core_pos.x - LAYOUT_CORE_BUFFER, core_pos.y - LAYOUT_CORE_BUFFER, this.data.room)
-    this.planStructureMatrix(layout, coreAdjusted, LAYOUT_CORE, (2*LAYOUT_CORE_BUFFER)+1)
+    const coreAdjusted = new RoomPosition(corePos.x - LAYOUT_CORE_BUFFER, corePos.y - LAYOUT_CORE_BUFFER, this.data.room)
+    this.planStructureMatrix(layout, coreAdjusted, LAYOUT_CORE, (2 * LAYOUT_CORE_BUFFER) + 1)
 
-    var flower1Adjusted = new RoomPosition(flower1_pos.x - LAYOUT_FLOWER_BUFFER, flower1_pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
-    this.planStructureMatrix(layout, flower1Adjusted, LAYOUT_FLOWER, (2*LAYOUT_FLOWER_BUFFER)+1)
+    const flower1Adjusted = new RoomPosition(flower1Pos.x - LAYOUT_FLOWER_BUFFER, flower1Pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
+    this.planStructureMatrix(layout, flower1Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
 
-    var flower2Adjusted = new RoomPosition(flower2_pos.x - LAYOUT_FLOWER_BUFFER, flower2_pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
-    this.planStructureMatrix(layout, flower2Adjusted, LAYOUT_FLOWER, (2*LAYOUT_FLOWER_BUFFER)+1)
+    const flower2Adjusted = new RoomPosition(flower2Pos.x - LAYOUT_FLOWER_BUFFER, flower2Pos.y - LAYOUT_FLOWER_BUFFER, this.data.room)
+    this.planStructureMatrix(layout, flower2Adjusted, LAYOUT_FLOWER, (2 * LAYOUT_FLOWER_BUFFER) + 1)
+
+    if (!this.planRoads(layout, corePos, flower1Pos, flower2Pos)) return this.suicide()
 
     layout.save()
-    Logger.log('Room planning for room ' + this.data.room + ' has successfully completed')
+    Logger.log(`Room planning for room ${this.data.room} has successfully completed`)
     return this.suicide()
   }
 
@@ -219,23 +365,129 @@ class CityLayout extends kernel.process {
     if (!size) {
       size = matrix.length
     }
-    for (var row = 0; row < size; row++) {
+    let row,
+      column
+    for (row = 0; row < size; row++) {
       if (!matrix[row]) {
         continue
       }
-      for (var column = 0; column < size; column++) {
+      for (column = 0; column < size; column++) {
         if (!matrix[row][column]) {
           continue
         }
-        var structure = matrix[row][column]
+        const structure = matrix[row][column]
         layout.planStructureAt(structure, leftCorner.x + column, leftCorner.y + row)
-        if (structure !== STRUCTURE_ROAD && !OBSTACLE_OBJECT_TYPES[structure]) {
+        if (structure !== STRUCTURE_ROAD && OBSTACLE_OBJECT_TYPES.indexOf(structure) === -1) {
           layout.planStructureAt(STRUCTURE_ROAD, leftCorner.x + column, leftCorner.y + row)
         }
       }
     }
   }
 
+  /**
+   * Plan roads from the core to the flowers and major room features (controller, sources, minerals).
+   */
+  planRoads (layout, corePos, flower1Pos, flower2Pos) {
+    Logger.log(`Planning roads for room: ${this.data.room}`, LOG_INFO, 'layout')
+    const matrix = this.getConstructionMatrix(layout)
+    this.planRoad(layout, corePos, flower1Pos, matrix)
+    this.planRoad(layout, corePos, flower2Pos, matrix)
+    if (this.room.controller) {
+      if (!this.planRoad(layout, corePos, this.room.controller.pos, matrix)) return false
+    }
+    const sources = this.room.find(FIND_SOURCES)
+    let source
+    for (source of sources) {
+      if (!this.planRoad(layout, corePos, source.pos, matrix)) return false
+    }
+    const minerals = this.room.find(FIND_MINERALS)
+    let mineral
+    for (mineral of minerals) {
+      if (!this.planRoad(layout, corePos, mineral.pos, matrix)) return false
+    }
+    return true
+  }
+
+  /*
+   * Plan a road between the given two positions within the same room.
+   * If a costMatrix is given, that will be used instead of generating a new one from the given layout's current state.
+   */
+  planRoad (layout, fromPos, toPos, matrix) {
+    if (!matrix) matrix = this.getConstructionMatrix(layout)
+    let path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 3, swampCost: 4, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } } })
+    if (!path || path.incomplete) path = PathFinder.search(fromPos, { pos: toPos, range: 1 }, { plainCost: 3, swampCost: 3, maxRooms: 1, maxOps: 6000, roomCallback: (roomName) => { if (roomName !== this.data.room) { return false } else { return matrix } }, heuristicWeight: 1.5 })
+    let spot
+    if (!path.path || path.path.length < 1) {
+      Logger.log(`Unable to find path for road from: ${fromPos} to: ${toPos} in room: ${this.data.room} path returned was: ${JSON.stringify(path)}`, LOG_ERROR, 'layout')
+      return false
+    } else Logger.log(`Planning road from: ${fromPos} to: ${toPos} in room: ${this.data.room} with length ${path.path.length}`, LOG_INFO, 'layout')
+    for (spot of path.path) {
+      if (spot.isSteppable() && !spot.isExit() && layout.planStructureAt(STRUCTURE_ROAD, spot.x, spot.y)) matrix.set(spot.x, spot.y, 1)
+    }
+    return true
+  }
+
+  /**
+   * Generate a road construction costMatrix from the given layout.
+   * Only structures in the layout are taken into consideration, unplanned existing structures are ignored. (maybe not ideal, discuss)
+   */
+  getConstructionMatrix (layout) {
+    const costMatrix = new PathFinder.CostMatrix()
+    let x,
+      y,
+      plannedStruct
+    for (x = 1; x < 49; ++x) {
+      for (y = 1; y < 49; ++y) {
+        const pos = new RoomPosition(x, y, this.data.room)
+        if (pos.isExit()) {
+          costMatrix.set(x, y, 0xff)
+          continue
+        }
+        if (pos.isSteppable() && pos.inFrontOfExit()) {
+          costMatrix.set(x, y, 30)
+          continue
+        }
+        if (layout) {
+          plannedStruct = layout.getStructureAt(x, y)
+          if (plannedStruct === STRUCTURE_ROAD) {
+            costMatrix.set(x, y, 2)
+          } else if (OBSTACLE_OBJECT_TYPES.indexOf(plannedStruct) > -1) {
+            // By making them walkable we allow the road planner to accept positions that are not actually reachable.
+            costMatrix.set(x, y, 120)
+          }
+        }
+      }
+    }
+    /**
+     * Ranges and costs for positions near controller and resources can be adjusted to taste in testing,
+     * these may not even be needed for just planning roads.
+     */
+    if (this.room.controller) {
+      const poses = this.room.controller.pos.getSteppableAdjacentInRange(2)
+      let pos
+      for (pos of poses) {
+        costMatrix.set(pos.x, pos.y, 30)
+      }
+    }
+    const sources = this.room.find(FIND_SOURCES)
+    let source,
+      pos
+    for (source of sources) {
+      const poses = source.pos.getSteppableAdjacentInRange(1)
+      for (pos of poses) {
+        costMatrix.set(pos.x, pos.y, 30)
+      }
+    }
+    const minerals = this.room.find(FIND_MINERALS)
+    let mineral
+    for (mineral of minerals) {
+      const poses = mineral.pos.getSteppableAdjacentInRange(1)
+      for (pos of poses) {
+        costMatrix.set(pos.x, pos.y, 30)
+      }
+    }
+    return costMatrix
+  }
 
   /**
    * Return positions with the required amount of room around them. A random result from all possible matches is
@@ -244,12 +496,14 @@ class CityLayout extends kernel.process {
    * differing results).
    */
   getPositionFor (dt, buffer, sort = false) {
-    var positions = []
-    for (var y = 0; y < 50; y++) {
-      for (var x = 0; x < 50; x++) {
+    let positions = []
+    let x,
+      y
+    for (x = 0; x < 50; x++) {
+      for (y = 0; y < 50; y++) {
         // gt, not gte, because the DT has a minimum of 1 instead of 0
         if (dt.get(x, y) > buffer) {
-          var pos = this.room.getPositionAt(x, y)
+          const pos = this.room.getPositionAt(x, y)
           positions.push(pos)
         }
       }
@@ -266,18 +520,29 @@ class CityLayout extends kernel.process {
   }
 
   addToMatrix (matrix, center, radius) {
-    var x_left = center.x - radius
-    var y_top = center.y - radius
-    if (x_left < 0) { x_left = 0 }
-    if (y_top < 0) { y_top = 0 }
+    let xLeft = center.x - radius
+    let yTop = center.y - radius
 
-    var x_right = center.x + radius
-    var y_bottom = center.y + radius
-    if ( x > 49 ) { x = 49}
-    if ( y > 49 ) { y = 49}
+    if (xLeft < 0) {
+      xLeft = 0
+    }
+    if (yTop < 0) {
+      yTop = 0
+    }
 
-    for (var x = x_left; x <= x_right; x++) {
-      for (var y = y_top; y <= y_bottom; y++) {
+    let xRight = center.x + radius
+    let yBottom = center.y + radius
+    if (xRight > 49) {
+      xRight = 49
+    }
+    if (yBottom > 49) {
+      yBottom = 49
+    }
+
+    let x,
+      y
+    for (x = xLeft; x <= xRight; x++) {
+      for (y = yTop; y <= yBottom; y++) {
         matrix.set(x, y, 0)
       }
     }
@@ -285,64 +550,80 @@ class CityLayout extends kernel.process {
   }
 
   getBaseMatrix () {
-    var costMatrix = new PathFinder.CostMatrix();
-    for (var y = 1; y < 49; ++y) {
-      for (var x = 1; x < 49; ++x) {
-        var pos = new RoomPosition(x, y, this.data.room)
-        if(pos.inFrontOfExit()) {
-          continue
+    const costMatrix = new PathFinder.CostMatrix()
+    let x,
+      y
+    const exits = this.room.find(FIND_EXIT)
+    const minimumExitRange = 3
+    for (x = 1; x < 49; ++x) {
+      for (y = 1; y < 49; ++y) {
+        const pos = new RoomPosition(x, y, this.data.room)
+        const isNearHorizontalBorder = y < minimumExitRange || y > (49 - minimumExitRange)
+        const isNearVerticalBorder = x < minimumExitRange || x > (49 - minimumExitRange)
+        if (isNearVerticalBorder || isNearHorizontalBorder) {
+          if (pos.findClosestByRange(exits).getRangeTo(pos) < minimumExitRange) {
+            continue
+          }
         }
-        if (pos.getTerrainAt() != 'wall') {
-          costMatrix.set(x, y, 1);
+        if (pos.getTerrainAt() !== 'wall') {
+          costMatrix.set(x, y, 1)
         }
       }
     }
-    if(!!this.room.controller) {
-      var poses = this.room.controller.pos.getAdjacent()
-      for (var pos of poses) {
-        costMatrix.set(pos.x, pos.y, 0);
+    if (this.room.controller) {
+      const poses = this.room.controller.pos.getAdjacentInRange(3)
+      let pos
+      for (pos of poses) {
+        costMatrix.set(pos.x, pos.y, 0)
       }
     }
-    var sources = this.room.find(FIND_SOURCES)
-    for(var source of sources) {
-      var poses = source.pos.getAdjacent()
-      for (var pos of poses) {
-        costMatrix.set(pos.x, pos.y, 0);
+    const sources = this.room.find(FIND_SOURCES)
+    let source,
+      pos
+    for (source of sources) {
+      const poses = source.pos.getAdjacentInRange(2)
+      for (pos of poses) {
+        costMatrix.set(pos.x, pos.y, 0)
       }
     }
-    var minerals = this.room.find(FIND_MINERALS)
-    for(var mineral of minerals) {
-      var poses = mineral.pos.getAdjacent()
-      for (var pos of poses) {
-        costMatrix.set(pos.x, pos.y, 0);
+    const minerals = this.room.find(FIND_MINERALS)
+    let mineral
+    for (mineral of minerals) {
+      const poses = mineral.pos.getAdjacentInRange(2)
+      for (pos of poses) {
+        costMatrix.set(pos.x, pos.y, 0)
       }
     }
 
-    return costMatrix;
+    return costMatrix
   }
 
   displayMatrix (matrix) {
-    var visual = new RoomVisual(this.data.room);
-    for (var y = 0; y < 50; ++y) {
-      for (var x = 0; x < 50; ++x) {
-        var value = matrix.get(x, y)
+    const visual = new RoomVisual(this.data.room)
+    let x,
+      y
+    for (x = 0; x < 50; ++x) {
+      for (y = 0; y < 50; ++y) {
+        const value = matrix.get(x, y)
         if (value > 0) {
-          //vis.circle(x, y, {radius:costMatrix.get(x, y)/max/2, fill:color});
-          if(value >= 100) {
-            var fontsize = '0.5'
-            var y_offset = 0.19
-          } else if(value >= 10) {
-            var fontsize = '0.7'
-            var y_offset = 0.22
+          let fontsize,
+            yOffset
+          // vis.circle(x, y, {radius:costMatrix.get(x, y)/max/2, fill:color})
+          if (value >= 100) {
+            fontsize = '0.5'
+            yOffset = 0.19
+          } else if (value >= 10) {
+            fontsize = '0.7'
+            yOffset = 0.22
           } else {
-            var fontsize = '0.8'
-            var y_offset = 0.25
+            fontsize = '0.8'
+            yOffset = 0.25
           }
-          visual.text(value, x - 0.05, +y + y_offset, {
+          visual.text(value, x - 0.05, +y + yOffset, {
             color: '#000000',
             stroke: '#FFFFFF',
             strokeWidth: 0.05,
-            font: fontsize,
+            font: fontsize
           })
         }
       }

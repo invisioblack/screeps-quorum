@@ -1,8 +1,10 @@
+'use strict'
 const colors = {
   gray: '#555555',
   light: '#AAAAAA',
   road: '#666', // >:D
   energy: '#FFE87B',
+  rampart: '#434C43',
   power: '#F53547',
   dark: '#181818',
   outline: '#8FBB93',
@@ -16,33 +18,33 @@ const speechFont = 'Times New Roman'
 RoomVisual.prototype.structure = function(x,y,type,opts={}){
   opts = Object.assign({
     opacity: 1
-  },opts)
+  }, colors, opts)
   switch(type){
     case STRUCTURE_EXTENSION:
       this.circle(x,y,{
         radius: 0.5,
-        fill: colors.dark,
-        stroke: colors.outline,
+        fill: opts.dark,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
       this.circle(x,y,{
         radius: 0.35,
-        fill: colors.gray,
+        fill: opts.gray,
         opacity: opts.opacity
       })
       break
     case STRUCTURE_SPAWN:
       this.circle(x,y,{
         radius: 0.65,
-        fill: colors.dark,
+        fill: opts.dark,
         stroke: '#CCCCCC',
         strokeWidth: 0.10,
         opacity: opts.opacity
       })
       this.circle(x,y,{
         radius: 0.40,
-        fill: colors.energy,
+        fill: opts.energy,
         opacity: opts.opacity
       })
 
@@ -50,14 +52,14 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
     case STRUCTURE_POWER_SPAWN:
       this.circle(x,y,{
         radius: 0.65,
-        fill: colors.dark,
-        stroke: colors.power,
+        fill: opts.dark,
+        stroke: opts.power,
         strokeWidth: 0.10,
         opacity: opts.opacity
       })
       this.circle(x,y,{
         radius: 0.40,
-        fill: colors.energy,
+        fill: opts.energy,
         opacity: opts.opacity
       })
       break;
@@ -82,13 +84,13 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
       outer.push(outer[0])
       inner.push(inner[0])
       this.poly(outer,{
-        fill: colors.dark,
-        stroke: colors.outline,
+        fill: opts.dark,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
       this.poly(inner,{
-        fill: colors.gray,
+        fill: opts.gray,
         stroke: false,
         opacity: opts.opacity
       })
@@ -121,19 +123,19 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
       outer.push(outer[0])
       inner.push(inner[0])
       this.poly(outer,{
-        fill: colors.dark,
-        stroke: colors.outline,
+        fill: opts.dark,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
       this.poly(inner,{
-        fill: colors.light,
+        fill: opts.light,
         stroke: false,
         opacity: opts.opacity
       })
       this.rect(x-0.45,y-0.45,0.9,0.9,{
-        fill: colors.gray,
-        stroke: colors.dark,
+        fill: opts.gray,
+        stroke: opts.dark,
         strokeWidth: 0.1,
         opacity: opts.opacity
       })
@@ -142,18 +144,18 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
     case STRUCTURE_LAB:
       this.circle(x,y-0.025,{
         radius: 0.55,
-        fill: colors.dark,
-        stroke: colors.outline,
+        fill: opts.dark,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
       this.circle(x,y-0.025,{
         radius: 0.40,
-        fill: colors.gray,
+        fill: opts.gray,
         opacity: opts.opacity
       })
       this.rect(x-0.45,y+0.3,0.9,0.25,{
-        fill: colors.dark,
+        fill: opts.dark,
         stroke: false,
         opacity: opts.opacity
       })
@@ -166,7 +168,7 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
         ]
         box = relPoly(x,y,box)
         this.poly(box,{
-          stroke: colors.outline,
+          stroke: opts.outline,
           strokeWidth: 0.05,
           opacity: opts.opacity
         })
@@ -175,18 +177,18 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
     case STRUCTURE_TOWER:
       this.circle(x,y,{
         radius: 0.6,
-        fill: colors.dark,
-        stroke: colors.outline,
+        fill: opts.dark,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
       this.rect(x-0.4,y-0.3,0.8,0.6,{
-        fill: colors.gray,
+        fill: opts.gray,
         opacity: opts.opacity
       })
       this.rect(x-0.2,y-0.9,0.4,0.5,{
-        fill: colors.light,
-        stroke: colors.dark,
+        fill: opts.light,
+        stroke: opts.dark,
         strokeWidth: 0.07,
         opacity: opts.opacity
       })
@@ -194,7 +196,7 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
     case STRUCTURE_ROAD:
       this.circle(x,y,{
         radius: 0.175,
-        fill: colors.road,
+        fill: opts.road,
         stroke: false,
         opacity: opts.opacity
       })
@@ -204,8 +206,8 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
     case STRUCTURE_RAMPART:
       this.circle(x,y,{
         radius: 0.65,
-        fill: '#434C43',
-        stroke: '#5D735F',
+        fill: opts.rampart,
+        stroke: opts.gray,
         strokeWidth: 0.10,
         opacity: opts.opacity
       })
@@ -213,8 +215,8 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
     case STRUCTURE_WALL:
       this.circle(x,y,{
         radius: 0.40,
-        fill: colors.dark,
-        stroke: colors.light,
+        fill: opts.dark,
+        stroke: opts.light,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
@@ -233,28 +235,28 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
       outer = relPoly(x, y, outer);
       outer.push(outer[0]);
       this.poly(outer, {
-        fill: colors.dark,
-        stroke: colors.outline,
+        fill: opts.dark,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       });
       this.rect(x - .5, y - 0.6, 1, 1.2, {
-        fill: colors.gray,
-        stroke: colors.dark,
+        fill: opts.gray,
+        stroke: opts.dark,
         strokeWidth: 0.1,
         opacity: opts.opacity
       });
       break;
     case STRUCTURE_OBSERVER:
       this.circle(x, y, {
-        fill: colors.dark,
+        fill: opts.dark,
         radius: 0.45,
-        stroke: colors.outline,
+        stroke: opts.outline,
         strokeWidth: 0.05,
         opacity: opts.opacity
       })
       this.circle(x + 0.225, y, {
-        fill: colors.outline,
+        fill: opts.outline,
         radius: 0.20,
         opacity: opts.opacity
       })
@@ -270,9 +272,9 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
       ];
       outline = relPoly(x,y,outline)
       this.poly(outline,{
-        stroke: colors.outline,
+        stroke: opts.outline,
         strokeWidth: 0.05,
-        fill: colors.dark,
+        fill: opts.dark,
         opacity: opts.opacity
       })
       let inline = [
@@ -283,9 +285,9 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
       ]
       inline = relPoly(x,y,inline)
       this.poly(inline,{
-        stroke: colors.outline,
+        stroke: opts.outline,
         strokeWidth: 0.01,
-        fill: colors.gray,
+        fill: opts.gray,
         opacity: opts.opacity
       })
       break;
@@ -293,15 +295,15 @@ RoomVisual.prototype.structure = function(x,y,type,opts={}){
 			this.rect(x - 0.225, y - 0.3, 0.45, 0.6,{
 					fill: "yellow",
 					opacity: opts.opacity,
-					stroke: colors.dark,
+					stroke: opts.dark,
 					strokeWidth: 0.10,
 				});
 			break;
     default:
       this.circle(x, y, {
-        fill: colors.light,
+        fill: opts.light,
         radius: 0.35,
-        stroke: colors.dark,
+        stroke: opts.dark,
         strokeWidth: 0.20,
         opacity: opts.opacity
       })
@@ -322,7 +324,7 @@ const dirs = [
 ]
 
 RoomVisual.prototype.connectRoads = function(opts={}){
-  let color = opts.color || colors.road || 'white'
+  let color = opts.color || opts.road || 'white'
   if(!this.roads) return
   // this.text(this.roads.map(r=>r.join(',')).join(' '),25,23)
   this.roads.forEach(r=>{
@@ -345,8 +347,8 @@ RoomVisual.prototype.connectRoads = function(opts={}){
 
 
 RoomVisual.prototype.speech = function(text, x, y, opts={}) {
-  var background = !!opts.background ? opts.background : colors.speechBackground
-  var textcolor = !!opts.textcolor ? opts.textcolor : colors.speechText
+  var background = !!opts.background ? opts.background : opts.speechBackground
+  var textcolor = !!opts.textcolor ? opts.textcolor : opts.speechText
   var textstyle = !!opts.textstyle ? opts.textstyle : false
   var textsize = !!opts.textsize ? opts.textsize : speechSize
   var textfont = !!opts.textfont ? opts.textfont : speechFont
@@ -405,8 +407,6 @@ RoomVisual.prototype.animatedPosition = function (x, y, opts={}) {
       rotate(-radius, 0, s, c, x, y),
       rotate(0, -radius, s, c, x, y),
   ];
-
-  Logger.highlightData(points)
 
   return this.poly(points, {stroke: color, opacity: opacity});
 }

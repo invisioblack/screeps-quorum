@@ -1,3 +1,4 @@
+'use strict'
 
 var sos_lib_vram = {
 
@@ -71,14 +72,14 @@ var sos_lib_vram = {
   },
 
   getVersion: function (key) {
-    if(!Memory.sos.segments) {
+    if(!Memory.sos.vram) {
       return false
     }
-    if(!Memory.sos.segments.m[key]) {
+    if(!Memory.sos.vram.m[key]) {
       return false
     }
 
-    return Memory.sos.segments.m[key].v
+    return Memory.sos.vram.m[key].v
   },
 
   setActive(key, ttl=15) {
@@ -181,7 +182,7 @@ var sos_lib_vram = {
       }
       return
     }
-    console.log('Saving segment')
+    console.log(`Saving segment ${key}`)
     sos.lib.segments.saveObject(key, value)
   }
 

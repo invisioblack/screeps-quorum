@@ -1,11 +1,13 @@
+'use strict'
+
 /**
  * This program detects when the game has no spawns or creeps and unclaims atll rooms, triggering a respawn.
  */
 
 class Respawn extends kernel.process {
-
-  priority () {
-    return 12
+  constructor (...args) {
+    super(...args)
+    this.priority = PRIORITIES_RESPAWNER
   }
 
   main () {
@@ -14,12 +16,18 @@ class Respawn extends kernel.process {
       return
     }
     Logger.log('Dead code detected, initiating despawn', LOG_FATAL)
+
     /* Check all rooms for player owned controllers and unclaim them */
-    for (var roomname of Object.keys(Game.rooms)) {
+    let roomname
+    for (roomname of Object.keys(Game.rooms)) {
       if (Game.rooms[roomname].controller && Game.rooms[roomname].controller.my) {
-        Logger.log('Unclaiming room ' + roomname)
+        Logger.log(`Unclaiming room ${roomname}`)
         Game.rooms[roomname].controller.unclaim()
       }
+    }
+    /* Remove all construction sites */
+    for (const siteId of Object.keys(Game.constructionSites)) {
+      Game.constructionSites[siteId].remove()
     }
   }
 }

@@ -1,10 +1,20 @@
+'use strict'
 /**
  * Creep Runner- it takes responsibility for a single creep
  */
 
 class ProgramCreep extends kernel.process {
+  getPriority () {
+    const role = Creep.getRoleFromName(this.data.creep)
+    return role.getPriority()
+  }
+
   getDescriptor () {
     return this.data.creep
+  }
+
+  getPerformanceDescriptor () {
+    return this.data.creep.split('_', 1)[0]
   }
 
   main () {
@@ -17,13 +27,13 @@ class ProgramCreep extends kernel.process {
     }
 
     // Get creep
-    var creep = Game.creeps[this.data.creep]
+    const creep = Game.creeps[this.data.creep]
     if (creep.spawning) {
       return
     }
 
     // Load and run creep role
-    var role = creep.getRole()
+    const role = creep.getRole()
     role.manageCreep(creep)
   }
 }

@@ -1,27 +1,18 @@
+'use strict'
 
 class MetaRole {
-
-  recharge(creep) {
-    if (creep.carry[RESOURCE_ENERGY] <= 0) {
-      creep.memory.recharge = true
+  setBuildDefaults (room, options) {
+    if (!options.energy) {
+      options.energy = this.defaultEnergy || room.energyCapacityAvailable
     }
-    if (creep.carry[RESOURCE_ENERGY] >= creep.carryCapacity) {
-      creep.memory.recharge = false
+    if (options.energy > room.energyCapacityAvailable) {
+      options.energy = room.energyCapacityAvailable
     }
-    if (creep.memory.recharge) {
-      var sources = creep.room.find(FIND_SOURCES_ACTIVE)
-      var source = creep.pos.findClosestByRange(sources)
-      if (!creep.pos.isNearTo(source)) {
-        creep.moveTo(source)
-      }
-      if (creep.pos.isNearTo(source)) {
-        creep.harvest(source)
-      }
-      return true
-    }
-    return false
   }
 
+  getPriority (creep) {
+    return PRIORITIES_CREEP_DEFAULT
+  }
 }
 
 module.exports = MetaRole

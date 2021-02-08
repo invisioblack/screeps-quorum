@@ -1,20 +1,26 @@
+'use strict'
+
 const MetaRole = require('roles_meta')
 
 class Builder extends MetaRole {
-  getBuild (options) {
+  getBuild (room, options) {
+    this.setBuildDefaults(room, options)
     return Creep.buildFromTemplate([MOVE, CARRY, WORK], options.energy)
   }
 
   manageCreep (creep) {
-    if (this.recharge(creep)) {
+    if (creep.ticksToLive < 50) {
+      return creep.recycle()
+    }
+    if (creep.recharge()) {
       return
     }
 
     // Find and build any construction sites
-    var construction = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES)
+    const construction = creep.pos.findClosestByRange(FIND_MY_CONSTRUCTION_SITES)
     if (construction) {
       if (creep.pos.getRangeTo(construction) > 2) {
-        creep.moveTo(construction)
+        creep.travelTo(construction)
       }
       if (creep.pos.getRangeTo(construction) <= 3) {
         creep.build(construction)
@@ -23,9 +29,9 @@ class Builder extends MetaRole {
     }
 
     // Upgrade controller if there isn't anything to build
-    var controller = creep.room.controller
+    const controller = creep.room.controller
     if (creep.pos.getRangeTo(controller) > 2) {
-      creep.moveTo(controller)
+      creep.travelTo(controller)
     }
     if (creep.pos.getRangeTo(controller) <= 3) {
       creep.upgradeController(controller)

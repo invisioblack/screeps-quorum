@@ -1,13 +1,17 @@
 'use strict'
 
 Creep.getRole = function (roleName) {
-  var Role = require('roles_' + roleName)
+  const Role = require('roles_' + roleName)
   return new Role()
+}
+
+Creep.getRoleFromName = function (creepname) {
+  return Creep.getRole(creepname.split('_', 1)[0])
 }
 
 Creep.prototype.getRole = function () {
   // If the creep role isn't in memory grab it based off of the name
-  var roleType = this.memory.role ? this.memory.role : this.name.split('_', 1)[0]
+  const roleType = this.memory.role ? this.memory.role : this.name.split('_', 1)[0]
   return Creep.getRole(roleType)
 }
 
@@ -17,7 +21,7 @@ Creep.getCost = function (parts) {
       return BODYPART_COST[parts]
     }
   }
-  var cost = 0
+  let cost = 0
   _.forEach(parts, function (part) {
     cost += BODYPART_COST[part]
   })
@@ -25,9 +29,9 @@ Creep.getCost = function (parts) {
 }
 
 Creep.buildFromTemplate = function (template, energy) {
-  var parts = []
+  const parts = []
   while (energy > 0 && parts.length < 50) {
-    var next = template[parts.length % template.length]
+    const next = template[parts.length % template.length]
     if (BODYPART_COST[next] > energy) {
       break
     }
@@ -35,4 +39,11 @@ Creep.buildFromTemplate = function (template, energy) {
     parts.push(next)
   }
   return parts
+}
+
+Creep.prototype.getCarryPercentage = function () {
+  if (this.carryCapacity <= 0) {
+    return 0
+  }
+  return _.sum(this.carry) / this.carryCapacity
 }
